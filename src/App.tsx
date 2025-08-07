@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Typography, theme, message, Upload, Button, Empty } from 'antd';
-import { Bubble, Conversations, Sender } from '@ant-design/x';
+import { Bubble, Sender } from '@ant-design/x';
 import { UploadOutlined, DownloadOutlined, FileTextOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import './App.css';
 
@@ -96,6 +96,7 @@ function App() {
   };
 
   const handleFileUpload = async (file: File) => {
+    console.log('开始处理文件:', file.name, file.size); // 调试信息
     if (!file) return;
 
     const userMessageId = Date.now().toString();
@@ -122,7 +123,11 @@ function App() {
       status: 'loading'
     };
 
-    setMessages(prev => [...prev, userMessage, loadingMessage]);
+    setMessages(prev => {
+      const newMessages = [...prev, userMessage, loadingMessage];
+      console.log('添加新消息:', newMessages.length, newMessages);
+      return newMessages;
+    });
     setLoading(true);
 
     try {
@@ -171,11 +176,7 @@ function App() {
   };
 
   const handleUploadChange = (info: any) => {
-    const { file } = info;
-    if (file.status === 'done' || file.originFileObj) {
-      const uploadFile = file.originFileObj || file;
-      handleFileUpload(uploadFile);
-    }
+    console.log('Upload change event:', info); // 调试信息
   };
 
   return (
@@ -188,7 +189,7 @@ function App() {
         padding: '0 24px'
       }}>
         <Title level={3} style={{ margin: 0 }}>
-          RAG 智能文档处理系统
+          市监局智能体
         </Title>
       </Header>
       
@@ -207,8 +208,17 @@ function App() {
             flexDirection: 'column'
           }}
         >
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            {messages.length === 0 ? (
+          <div style={{ 
+            flex: 1, 
+            display: 'flex', 
+            flexDirection: 'column',
+            padding: '16px',
+            overflowY: 'auto'
+          }}>
+            {(() => {
+              console.log('当前消息数量:', messages.length, messages);
+              return messages.length === 0;
+            })() ? (
               <div className="empty-state">
                 <CloudUploadOutlined />
                 <div>欢迎使用 RAG 智能文档处理系统</div>
@@ -217,32 +227,46 @@ function App() {
                 </div>
               </div>
             ) : (
-              <Conversations
-                items={messages.map(msg => ({
-                  key: msg.id,
-                  label: msg.role === 'user' ? '用户' : 'AI助手',
-                  value: msg.id
-                }))}
-                style={{ flex: 1, padding: '16px' }}
-              >
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '16px',
+                flex: 1 
+              }}>
                 {messages.map((msg, index) => (
-                  <div key={msg.id} className="message-slide-in">
+                  <div 
+                    key={msg.id} 
+                    className="message-slide-in"
+                    style={{
+                      display: 'flex',
+                      justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                      marginBottom: '12px'
+                    }}
+                  >
                     <Bubble
                       content={msg.content}
                       avatar={
                         msg.role === 'user' 
-                          ? { style: { background: '#1890ff' } }
-                          : { style: { background: '#52c41a' } }
+                          ? { 
+                              style: { background: '#1890ff' },
+                              children: '用户'
+                            }
+                          : { 
+                              style: { background: '#52c41a' },
+                              children: 'AI'
+                            }
                       }
                       placement={msg.role === 'user' ? 'end' : 'start'}
                       loading={msg.status === 'loading'}
                       style={{ 
                         animationDelay: `${index * 0.1}s`,
+                        maxWidth: '80%',
+                        width: 'auto'
                       }}
                     />
                   </div>
                 ))}
-              </Conversations>
+              </div>
             )}
           </div>
           
@@ -252,7 +276,7 @@ function App() {
             background: '#fafafa',
             display: 'flex',
             gap: '12px',
-            alignItems: 'flex-end'
+            alignItems: 'center'
           }}>
             <div style={{ flex: 1 }}>
               <Sender
@@ -272,7 +296,11 @@ function App() {
               maxCount={1}
               showUploadList={false}
               onChange={handleUploadChange}
-              beforeUpload={() => false} // 阻止自动上传
+              beforeUpload={(file) => {
+                console.log('Before upload:', file); // 调试信息
+                handleFileUpload(file);
+                return false; // 阻止自动上传
+              }}
             >
               <Button 
                 icon={<UploadOutlined />} 
