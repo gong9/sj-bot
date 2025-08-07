@@ -1,0 +1,248 @@
+/* 全局样式重置 */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 聊天界面样式 */
+.chat-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 上传文件显示样式 */
+.uploaded-file {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f6f8fa;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  margin: 4px 0;
+  max-width: 300px;
+  transition: all 0.3s ease;
+}
+
+.uploaded-file:hover {
+  background: #eef2f5;
+  border-color: #1890ff;
+}
+
+/* 下载文件显示样式 */
+.download-files {
+  max-width: 400px;
+}
+
+.download-file-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f0f9ff;
+  border: 1px solid #b3e0ff;
+  border-radius: 6px;
+  margin: 6px 0;
+  transition: all 0.3s ease;
+}
+
+.download-file-item:hover {
+  background: #e6f4ff;
+  border-color: #1890ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
+}
+
+.download-file-item a {
+  color: #1890ff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.download-file-item a:hover {
+  color: #40a9ff;
+  text-decoration: underline;
+}
+
+/* 聊天气泡自定义样式 */
+.ant-bubble {
+  transition: all 0.3s ease;
+}
+
+.ant-bubble:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 输入框区域样式 */
+.input-area {
+  background: linear-gradient(to right, #fafafa, #f5f5f5);
+  backdrop-filter: blur(10px);
+}
+
+/* 自定义滚动条 */
+.ant-conversations::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ant-conversations::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.ant-conversations::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.ant-conversations::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 加载动画优化 */
+.ant-spin-dot {
+  background: linear-gradient(45deg, #1890ff, #40a9ff);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .uploaded-file,
+  .download-files {
+    max-width: 100%;
+  }
+  
+  .download-file-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .download-file-item a {
+    align-self: flex-end;
+  }
+}
+
+/* 美化按钮样式 */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #1890ff, #40a9ff);
+  border: none;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, #40a9ff, #69c0ff);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+}
+
+/* 上传区域样式 */
+.ant-upload-btn {
+  transition: all 0.3s ease;
+}
+
+.ant-upload-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* 头部标题样式 */
+.app-header .ant-typography {
+  background: linear-gradient(135deg, #1890ff, #722ed1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}
+
+/* 聊天内容区域样式 */
+.chat-content {
+  background: linear-gradient(135deg, #fafafa 0%, #f0f2f5 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 空状态样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #999;
+  font-size: 16px;
+}
+
+.empty-state .anticon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* 消息发送动画 */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.message-slide-in {
+  animation: messageSlideIn 0.3s ease-out;
+}
+
+/* 文件处理状态指示器 */
+.processing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  border-radius: 6px;
+  color: #fa8c16;
+  font-size: 14px;
+}
+
+.processing-indicator .anticon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
