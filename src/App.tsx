@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Typography, theme, message, Upload, Button, Empty } from 'antd';
+import { Layout, Typography, theme, message, Upload, Button } from 'antd';
 import { Bubble, Sender } from '@ant-design/x';
 import { UploadOutlined, DownloadOutlined, FileTextOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import './App.css';
