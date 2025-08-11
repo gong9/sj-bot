@@ -73,36 +73,35 @@ function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // 模拟API调用
-  const simulateProcessing = async (file: File): Promise<{ name: string; url: string; size: number }[]> => {
-    // 模拟处理延迟
-    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
+  const uploadFile = async (file: File): Promise<{ name: string; url: string; size: number }[]> => {
+    const formData = new FormData();
+    formData.append('file', file);
     
-    // 模拟返回处理结果文件
-    const resultFiles = [
-      {
-        name: `processed_${file.name}`,
-        url: URL.createObjectURL(new Blob(['这是处理后的文件内容\n经过RAG系统处理的结果'], { type: 'text/plain' })),
-        size: Math.floor(Math.random() * 50000) + 10000
-      },
-      {
-        name: `analysis_report.txt`,
-        url: URL.createObjectURL(new Blob(['文档分析报告\n\n1. 内容摘要\n2. 关键信息提取\n3. 相关性分析'], { type: 'text/plain' })),
-        size: Math.floor(Math.random() * 30000) + 5000
+    try {
+      const response = await fetch('http://localhost:3001/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error(`上传失败: ${response.status}`);
       }
-    ];
-    
-    return resultFiles;
+      
+      const data = await response.json();
+      
+      return data.data || [];
+    } catch (error) {
+      console.error('文件上传错误:', error);
+      throw error;
+    }
   };
 
   const handleFileUpload = async (file: File) => {
-    console.log('开始处理文件:', file.name, file.size); // 调试信息
     if (!file) return;
 
     const userMessageId = Date.now().toString();
     const assistantMessageId = (Date.now() + 1).toString();
 
-    // 添加用户消息
     const userMessage: ChatMessage = {
       id: userMessageId,
       content: <UploadedFileDisplay file={file} />,
@@ -110,7 +109,7 @@ function App() {
       uploadedFile: file
     };
 
-    // 添加加载中的助手消息
+
     const loadingMessage: ChatMessage = {
       id: assistantMessageId,
       content: (
@@ -131,10 +130,8 @@ function App() {
     setLoading(true);
 
     try {
-      // 模拟处理文件
-      const resultFiles = await simulateProcessing(file);
+      const resultFiles = await uploadFile(file);
       
-      // 更新助手消息为成功状态
       const successMessage: ChatMessage = {
         id: assistantMessageId,
         content: <DownloadFilesDisplay files={resultFiles} />,
@@ -149,7 +146,6 @@ function App() {
       
       message.success('文件处理完成！');
     } catch (error) {
-      // 更新助手消息为错误状态
       const errorMessage: ChatMessage = {
         id: assistantMessageId,
         content: '抱歉，处理文件时出现错误，请重试。',
@@ -189,7 +185,7 @@ function App() {
         padding: '0 24px'
       }}>
         <Title level={3} style={{ margin: 0 }}>
-          市监局智能体
+          蓝盾智擎-市场监管智能大脑
         </Title>
       </Header>
       
@@ -297,9 +293,8 @@ function App() {
               showUploadList={false}
               onChange={handleUploadChange}
               beforeUpload={(file) => {
-                console.log('Before upload:', file); // 调试信息
                 handleFileUpload(file);
-                return false; // 阻止自动上传
+                return false; 
               }}
             >
               <Button 
@@ -321,7 +316,7 @@ function App() {
             textAlign: 'center',
             background: '#fafafa'
           }}>
-            支持上传 .txt, .pdf, .doc, .docx, .md 格式文件，文件大小不超过 10MB
+            支持上传 .txt, .pdf, .doc, .docx, .md 格式文件
           </div>
         </div>
       </Content>
