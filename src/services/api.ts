@@ -1,4 +1,4 @@
-export const uploadFile = async (file: File): Promise<{ name: string; url: string; size: number }[]> => {
+export const uploadFile = async (file: File): Promise<{ fileName: string; url: string; size: number }[]> => {
   const formData = new FormData();
   formData.append('file', file);
   
@@ -21,14 +21,14 @@ export const uploadFile = async (file: File): Promise<{ name: string; url: strin
   }
 };
 
-export const sendTextMessage = async (text: string): Promise<{ name: string; url: string; size: number }[]> => {
+export const sendTextMessage = async (text: string): Promise<{ fileName: string; url: string; size: number }[]> => {
   try {
-    const response = await fetch('http://localhost:3001/api/text', {
+    const response = await fetch('http://172.16.21.121:8001/v1/genNotes', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message: text }),
+      body: JSON.stringify({ caseDescription: text }),
     });
     
     if (!response.ok) {
@@ -36,7 +36,7 @@ export const sendTextMessage = async (text: string): Promise<{ name: string; url
     }
     
     const data = await response.json();
-    return data.data || [];
+    return [data.data.evidences, data.data.notes]
   } catch (error) {
     console.error('文本消息发送错误:', error);
     throw error;

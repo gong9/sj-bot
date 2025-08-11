@@ -19,22 +19,22 @@ export const DownloadFilesDisplay: React.FC<DownloadFilesDisplayProps> = ({ file
     {files.map((file, index) => (
       <div key={index} className="download-file-item">
         <FileTextOutlined style={{ marginRight: 8, color: '#52c41a' }} />
-        <span>{file.name}</span>
+        <span>{file.fileName}</span>
         <span style={{ color: '#666', marginLeft: 8 }}>
           ({(file.size / 1024).toFixed(1)} KB)
         </span>
         <a
-          href={file.url}
-          download={file.name}
+          href={'http://172.16.21.121:8001/v1/downloadFile'+file.url}
+          download={file.fileName}
           style={{ marginLeft: 12 }}
           onClick={(e) => {
             e.preventDefault();
            
             const link = document.createElement('a');
-            link.href = file.url;
-            link.download = file.name;
+            link.href = 'http://172.16.21.121:8001/v1/downloadFile'+file.url;
+            link.download = file.fileName;
             link.click();
-            message.success(`开始下载 ${file.name}`);
+            message.success(`开始下载 ${file.fileName}`);
           }}
         >
           <DownloadOutlined /> 下载

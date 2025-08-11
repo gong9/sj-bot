@@ -6,7 +6,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   status?: 'loading' | 'success' | 'error';
   uploadedFile?: File;
-  downloadFiles?: { name: string; url: string; size: number }[];
+  downloadFiles?: { fileName: string; url: string; size: number }[];
 }
 
 export interface UploadedFileDisplayProps {
@@ -14,7 +14,7 @@ export interface UploadedFileDisplayProps {
 }
 
 export interface DownloadFilesDisplayProps {
-  files: { name: string; url: string; size: number }[];
+  files: { fileName: string; url: string; size: number }[];
 }
 
 export interface InputAreaProps {
