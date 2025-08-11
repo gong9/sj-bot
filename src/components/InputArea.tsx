@@ -28,7 +28,7 @@ export const InputArea: React.FC<InputAreaProps> = ({
   };
 
   const handleUploadChange = (info: any) => {
-    // console.log('Upload change event:', info);
+    console.log('Upload change event:', info);
   };
 
   return (
