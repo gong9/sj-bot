@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Layout, Typography, theme, message, Upload, Button } from 'antd';
 import { Bubble, Sender } from '@ant-design/x';
-import { UploadOutlined, DownloadOutlined, FileTextOutlined, CloudUploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, DownloadOutlined, FileTextOutlined, CloudUploadOutlined, SendOutlined } from '@ant-design/icons';
 import './App.css';
 
 const { Header, Content } = Layout;
@@ -72,6 +72,7 @@ function App() {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState('');
 
   const uploadFile = async (file: File): Promise<{ name: string; url: string; size: number }[]> => {
     const formData = new FormData();
@@ -93,6 +94,85 @@ function App() {
     } catch (error) {
       console.error('文件上传错误:', error);
       throw error;
+    }
+  };
+
+  const sendTextMessage = async (text: string): Promise<{ name: string; url: string; size: number }[]> => {
+    try {
+      const response = await fetch('http://localhost:3001/api/text', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: text }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`发送失败: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      console.error('文本消息发送错误:', error);
+      throw error;
+    }
+  };
+
+  const handleTextMessage = async (text: string) => {
+    const userMessageId = Date.now().toString();
+    const assistantMessageId = (Date.now() + 1).toString();
+
+    const userMessage: ChatMessage = {
+      id: userMessageId,
+      content: text,
+      role: 'user'
+    };
+
+    const loadingMessage: ChatMessage = {
+      id: assistantMessageId,
+      content: (
+        <div className="processing-indicator">
+          <CloudUploadOutlined />
+          正在处理您的消息，请稍候...
+        </div>
+      ),
+      role: 'assistant',
+      status: 'loading'
+    };
+
+    setMessages(prev => [...prev, userMessage, loadingMessage]);
+    setLoading(true);
+
+    try {
+      const resultFiles = await sendTextMessage(text);
+      
+      const responseMessage: ChatMessage = {
+        id: assistantMessageId,
+        content: <DownloadFilesDisplay files={resultFiles} />,
+        role: 'assistant',
+        status: 'success',
+        downloadFiles: resultFiles
+      };
+
+      setMessages(prev => 
+        prev.map(msg => msg.id === assistantMessageId ? responseMessage : msg)
+      );
+    } catch (error) {
+      const errorMessage: ChatMessage = {
+        id: assistantMessageId,
+        content: '抱歉，处理消息时出现错误，请重试。',
+        role: 'assistant',
+        status: 'error'
+      };
+
+      setMessages(prev => 
+        prev.map(msg => msg.id === assistantMessageId ? errorMessage : msg)
+      );
+      
+      // message.error('消息处理失败！');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -144,7 +224,7 @@ function App() {
         prev.map(msg => msg.id === assistantMessageId ? successMessage : msg)
       );
       
-      message.success('文件处理完成！');
+      // message.success('文件处理完成！');
     } catch (error) {
       const errorMessage: ChatMessage = {
         id: assistantMessageId,
@@ -157,7 +237,7 @@ function App() {
         prev.map(msg => msg.id === assistantMessageId ? errorMessage : msg)
       );
       
-      message.error('文件处理失败！');
+      // message.error('文件处理失败！');
     } finally {
       setLoading(false);
     }
@@ -167,7 +247,15 @@ function App() {
     const { message: inputMessage } = info;
     
     if (inputMessage?.trim()) {
-      message.warning('请上传文件进行处理');
+      await handleTextMessage(inputMessage.trim());
+      setInputValue(''); // 清空输入框状态
+    }
+  };
+
+  const handleSendClick = () => {
+    if (inputValue.trim()) {
+      handleTextMessage(inputValue.trim());
+      setInputValue(''); // 清空输入框
     }
   };
 
@@ -219,7 +307,7 @@ function App() {
                 <CloudUploadOutlined />
                 <div>欢迎使用 RAG 智能文档处理系统</div>
                 <div style={{ fontSize: 14, marginTop: 8, opacity: 0.6 }}>
-                  上传文档，让AI为您智能分析处理
+                  发送消息或上传文档，让AI为您智能分析处理
                 </div>
               </div>
             ) : (
@@ -236,7 +324,7 @@ function App() {
                     style={{
                       display: 'flex',
                       justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                      marginBottom: '12px'
+                      marginBottom: '11px'
                     }}
                   >
                     <Bubble
@@ -276,9 +364,28 @@ function App() {
           }}>
             <div style={{ flex: 1 }}>
               <Sender
-                placeholder="请上传文件进行处理..."
+                placeholder="输入消息或上传文件进行处理..."
                 onSubmit={onRequest}
                 loading={loading}
+                value={inputValue}
+                onChange={(value) => setInputValue(value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey && inputValue.trim()) {
+                    e.preventDefault();
+                    handleTextMessage(inputValue.trim());
+                    setInputValue('');
+                  }
+                }}
+                actions={
+                  <Button 
+                    type="primary" 
+                    icon={<SendOutlined />}
+                    onClick={handleSendClick}
+                    title="发送 (Enter)"
+                    loading={loading}
+                    disabled={!inputValue.trim()}
+                  ></Button>
+                }
                 style={{
                   background: '#fff',
                   borderRadius: 8
@@ -316,7 +423,7 @@ function App() {
             textAlign: 'center',
             background: '#fafafa'
           }}>
-            支持上传 .txt, .pdf, .doc, .docx, .md 格式文件
+            支持文本对话和上传 .txt, .pdf, .doc, .docx, .md 格式文件
           </div>
         </div>
       </Content>

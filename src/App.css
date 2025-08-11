@@ -11,6 +11,7 @@ html, body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
 /* 聊天界面样式 */
@@ -52,10 +53,10 @@ html, body {
   transition: all 0.3s ease;
 }
 
-.uploaded-file:hover {
+/* .uploaded-file:hover {
   background: #eef2f5;
   border-color: #1890ff;
-}
+} */
 
 /* 下载文件显示样式 */
 .download-files {
@@ -109,6 +110,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* 自定义滚动条 */
@@ -163,22 +165,41 @@ html, body {
   background: linear-gradient(135deg, #1890ff, #40a9ff);
   border: none;
   box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
-  transition: all 0.3s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
-.ant-btn-primary:hover {
-  background: linear-gradient(135deg, #40a9ff, #69c0ff);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+
+.ant-btn-primary:not(:disabled):not(.ant-btn-disabled):hover {
+  background: linear-gradient(135deg, #40a9ff, #69c0ff) !important;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4) !important;
 }
 
-/* 上传区域样式 */
+/* 上传区域样式 - 移除可能导致闪动的transform */
 .ant-upload-btn {
-  transition: all 0.3s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ant-upload-btn:hover {
-  transform: translateY(-1px);
+  /* 移除 transform: translateY(-1px); 避免闪动 */
+}
+
+/* 额外的按钮稳定性样式 */
+.ant-btn {
+  transform: none !important;
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.ant-btn:hover, .ant-btn:focus {
+  transform: none !important;
+}
+
+/* 防止 Upload 组件内部按钮的样式冲突 */
+.ant-upload .ant-btn {
+  transform: none !important;
+}
+
+.ant-upload .ant-btn:hover {
+  transform: none !important;
 }
 
 /* 头部标题样式 */
