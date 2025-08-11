@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Layout, Typography, theme, message, Upload, Button } from 'antd';
 import { Bubble, Sender } from '@ant-design/x';
 import { UploadOutlined, DownloadOutlined, FileTextOutlined, CloudUploadOutlined, SendOutlined } from '@ant-design/icons';
@@ -73,6 +73,17 @@ function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 自动滚动到底部
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // 当消息更新时自动滚动到底部
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const uploadFile = async (file: File): Promise<{ name: string; url: string; size: number }[]> => {
     const formData = new FormData();
@@ -285,19 +296,21 @@ function App() {
           className="chat-content"
           style={{
             background: colorBgContainer,
-            minHeight: 'calc(100vh - 112px)',
+            height: 'calc(100vh - 112px)', // 使用固定高度而不是 minHeight
             borderRadius: borderRadiusLG,
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column'
           }}
         >
-          <div style={{ 
+          <div className="messages-container" style={{ 
             flex: 1, 
             display: 'flex', 
             flexDirection: 'column',
             padding: '16px',
-            overflowY: 'auto'
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            minHeight: 0 // 关键：允许 flex 子元素缩小
           }}>
             {(() => {
               console.log('当前消息数量:', messages.length, messages);
@@ -311,11 +324,11 @@ function App() {
                 </div>
               </div>
             ) : (
-              <div style={{ 
+              <div className="chat-messages" style={{ 
                 display: 'flex', 
                 flexDirection: 'column', 
                 gap: '16px',
-                flex: 1 
+                flex: 1
               }}>
                 {messages.map((msg, index) => (
                   <div 
@@ -350,6 +363,7 @@ function App() {
                     />
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
               </div>
             )}
           </div>

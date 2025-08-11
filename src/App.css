@@ -133,6 +133,36 @@ html, body {
   background: #a8a8a8;
 }
 
+/* 移除多余的消息列表滚动条样式，使用外层容器的滚动条 */
+
+/* 主消息容器滚动条样式 */
+.messages-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+  margin: 8px 0;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: all 0.3s ease;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+  background-clip: content-box;
+}
+
+.messages-container::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* 加载动画优化 */
 .ant-spin-dot {
   background: linear-gradient(45deg, #1890ff, #40a9ff);
