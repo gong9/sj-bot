@@ -1,15 +1,10 @@
 import React from 'react';
 import { Bubble } from '@ant-design/x';
-import { CloudUploadOutlined } from '@ant-design/icons';
+// import { CloudUploadOutlined } from '@ant-design/icons';
 import type { ChatMessagesProps } from '../types';
 
 export const EmptyState: React.FC = () => (
   <div className="empty-state">
-    <CloudUploadOutlined />
-    <div>欢迎使用 RAG 智能文档处理系统</div>
-    <div style={{ fontSize: 14, marginTop: 8, opacity: 0.6 }}>
-      发送消息或上传文档，让AI为您智能分析处理
-    </div>
   </div>
 );
 

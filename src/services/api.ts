@@ -23,7 +23,7 @@ export const uploadFile = async (file: File): Promise<{ fileName: string; url: s
 
 export const sendTextMessage = async (text: string): Promise<{ fileName: string; url: string; size: number }[]> => {
   try {
-    const response = await fetch('http://172.16.21.121:8001/v1/genNotes', {
+    const response = await fetch('http://211.90.218.31:8081/v1/genNotes', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
