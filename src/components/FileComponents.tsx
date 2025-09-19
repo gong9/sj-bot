@@ -24,14 +24,14 @@ export const DownloadFilesDisplay: React.FC<DownloadFilesDisplayProps> = ({ file
           ({(file.size / 1024).toFixed(1)} KB)
         </span>
         <a
-          href={'http://211.90.218.31:8081/v1/downloadFile/'+file.url}
+          href={'http://211.90.219.252:38082/v1/downloadFile/'+file.url}
           download={file.fileName}
           style={{ marginLeft: 12 }}
           onClick={(e) => {
             e.preventDefault();
            
             const link = document.createElement('a');
-            link.href = 'http://211.90.218.31:8081/v1/downloadFile/'+file.url;
+            link.href = 'http://211.90.219.252:38082/v1/downloadFile/'+file.url;
             link.download = file.fileName;
             link.click();
             message.success(`开始下载 ${file.fileName}`);
